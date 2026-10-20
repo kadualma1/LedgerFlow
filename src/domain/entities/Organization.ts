@@ -29,14 +29,9 @@ export class Organization {
         this.status = state.status;
     }
 
-    // Cria uma organização nova.
-    public static create(
-        name: string,
-        baseCurrency: string
-    ): Organization {
+    public static create(name: string, baseCurrency: string): Organization {
         const validName = Organization.validateName(name);
-        const validCurrency =
-            Organization.validateCurrency(baseCurrency);
+        const validCurrency = Organization.validateCurrency(baseCurrency);
 
         const now = new Date();
 
@@ -50,28 +45,21 @@ export class Organization {
         });
     }
 
-    // Reconstrói uma organização já existente no banco.
     public static restore(state: OrganizationState): Organization {
         const name = Organization.validateName(state.name);
-        const baseCurrency =
-            Organization.validateCurrency(state.baseCurrency);
+        const baseCurrency = Organization.validateCurrency(state.baseCurrency);
 
         if (!state.id || !state.id.trim()) {
             throw new Error("Invalid organization ID.");
         }
 
-        if (
-            state.status !== "ACTIVE" &&
-            state.status !== "INACTIVE"
-        ) {
+        if (state.status !== "ACTIVE" && state.status !== "INACTIVE") {
             throw new Error("Invalid organization status.");
         }
 
-        if (
-            !Number.isFinite(state.createdAt.getTime()) ||
+        if (!Number.isFinite(state.createdAt.getTime()) ||
             !Number.isFinite(state.updatedAt.getTime()) ||
-            state.updatedAt.getTime() < state.createdAt.getTime()
-        ) {
+            state.updatedAt.getTime() < state.createdAt.getTime()) {
             throw new Error("Invalid organization dates.");
         }
 
@@ -82,7 +70,6 @@ export class Organization {
         });
     }
 
-    // Valida e normaliza o nome.
     private static validateName(name: string): string {
         if (typeof name !== "string") {
             throw new Error("Organization name must be a string.");
@@ -103,7 +90,6 @@ export class Organization {
         return normalizedName;
     }
 
-    // O MVP aceita apenas as moedas configuradas aqui.
     private static validateCurrency(currency: string): string {
         if (typeof currency !== "string") {
             throw new Error("Currency must be a string.");
@@ -119,8 +105,6 @@ export class Organization {
 
         return normalizedCurrency;
     }
-
-    // Getters
 
     public getId(): string {
         return this.id;
@@ -145,8 +129,6 @@ export class Organization {
     public getStatus(): OrganizationStatus {
         return this.status;
     }
-
-    // Operações de domínio
 
     public rename(newName: string): void {
         const validName = Organization.validateName(newName);
@@ -177,13 +159,8 @@ export class Organization {
         this.touch();
     }
 
-    // Alteração de moeda exige uma verificação externa.
-    public changeBaseCurrency(
-        newCurrency: string,
-        hasFinancialRecords: boolean
-    ): void {
-        const validCurrency =
-            Organization.validateCurrency(newCurrency);
+    public changeBaseCurrency(newCurrency: string, hasFinancialRecords: boolean): void {
+        const validCurrency = Organization.validateCurrency(newCurrency);
 
         if (validCurrency === this.baseCurrency) {
             return;
@@ -199,12 +176,10 @@ export class Organization {
         this.touch();
     }
 
-    // Atualiza a data da última alteração.
     private touch(): void {
         this.updatedAt = new Date();
     }
 
-    // Converte a entidade em um estado persistível.
     public toState(): OrganizationState {
         return {
             id: this.id,

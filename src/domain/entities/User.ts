@@ -186,6 +186,24 @@ export class User {
         this.touch();
     }
 
+    public verifyEmail(): void {
+        if (this.emailVerifiedAt !== null) {
+            return;
+        }
+        this.emailVerifiedAt = new Date();
+        this.touch();
+    }
+
+    public changeEmail(newEmail: string): void {
+        const validEmail = User.validateEmail(newEmail);
+        if (this.email === validEmail) {
+            return;
+        }
+        this.email = validEmail;
+        this.emailVerifiedAt = null;
+        this.touch();
+    }
+
     private touch(): void {
         this.updatedAt = new Date();
     }

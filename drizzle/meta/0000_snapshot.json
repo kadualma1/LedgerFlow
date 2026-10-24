@@ -1,0 +1,183 @@
+{
+  "id": "2a3c2b10-a32b-44e2-9e35-e669b86002aa",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.organizations": {
+      "name": "organizations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "base_currency": {
+          "name": "base_currency",
+          "type": "varchar(3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ACTIVE'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "chk_organization_name": {
+          "name": "chk_organization_name",
+          "value": "length(trim(\"organizations\".\"name\")) > 0"
+        },
+        "chk_organization_currency": {
+          "name": "chk_organization_currency",
+          "value": "\"organizations\".\"base_currency\" IN ('BRL', 'USD', 'EUR')"
+        },
+        "chk_organization_dates": {
+          "name": "chk_organization_dates",
+          "value": "\"organizations\".\"updated_at\" >= \"organizations\".\"created_at\""
+        },
+        "chk_organization_status": {
+          "name": "chk_organization_status",
+          "value": "\"organizations\".\"status\" IN ('ACTIVE', 'INACTIVE')"
+        }
+      },
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(120)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'ACTIVE'"
+        },
+        "email_verified_at": {
+          "name": "email_verified_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "idx_users_email_unique": {
+          "name": "idx_users_email_unique",
+          "columns": [
+            {
+              "expression": "lower(\"email\")",
+              "asc": true,
+              "isExpression": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "chk_user_name": {
+          "name": "chk_user_name",
+          "value": "length(trim(\"users\".\"name\")) > 0"
+        },
+        "chk_user_email": {
+          "name": "chk_user_email",
+          "value": "length(trim(\"users\".\"email\")) > 0"
+        },
+        "chk_user_dates": {
+          "name": "chk_user_dates",
+          "value": "\"users\".\"updated_at\" >= \"users\".\"created_at\""
+        },
+        "chk_user_status": {
+          "name": "chk_user_status",
+          "value": "\"users\".\"status\" IN ('ACTIVE', 'INACTIVE')"
+        },
+        "chk_user_email_verified_at": {
+          "name": "chk_user_email_verified_at",
+          "value": "\"users\".\"email_verified_at\" IS NULL OR (\"users\".\"email_verified_at\" >= \"users\".\"created_at\" AND \"users\".\"email_verified_at\" <= \"users\".\"updated_at\")"
+        }
+      },
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

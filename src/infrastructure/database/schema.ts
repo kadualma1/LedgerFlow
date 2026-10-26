@@ -1,6 +1,6 @@
 
 import { sql } from "drizzle-orm";
-import { check, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { check, pgTable, timestamp, index, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const organizations = pgTable("organizations", {
     id: uuid("id").primaryKey(),
@@ -31,4 +31,21 @@ export const users = pgTable("users", {
     check("chk_user_status", sql`${table.status} IN ('ACTIVE', 'INACTIVE')`),
     check("chk_user_email_verified_at", sql`${table.emailVerifiedAt} IS NULL OR (${table.emailVerifiedAt} >= ${table.createdAt} AND ${table.emailVerifiedAt} <= ${table.updatedAt})`),
     uniqueIndex("idx_users_email_unique").on(sql`lower(${table.email})`)
+]);
+
+export const memberships = pgTable("memberships", {
+    id: uuid("id").primaryKey(),
+    userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
+    organizationId: uuid("organization_id").notNull().references(() => organizations.id, { onDelete: "restrict" }),
+    role: varchar("role", { length: 8, enum: ["OPERATOR", "ADMIN", "VIEWER"] }).notNull(),
+    status: varchar("status", { length: 8, enum: ["ACTIVE", "INACTIVE"] }).notNull().default("ACTIVE"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull()
+}, (table) => [
+    check("chk_membership_role", sql`${table.role} IN ('OPERATOR', 'ADMIN', 'VIEWER')`),
+    check("chk_membership_status", sql`${table.status} IN ('ACTIVE', 'INACTIVE')`),
+    check("chk_membership_dates", sql`${table.updatedAt} >= ${table.createdAt}`),
+    uniqueIndex("idx_memberships_user_organization_unique").on(table.userId, table.organizationId),
+    index("idx_memberships_user_id").on(table.userId),
+    index("idx_memberships_organization_id").on(table.organizationId),
 ]);

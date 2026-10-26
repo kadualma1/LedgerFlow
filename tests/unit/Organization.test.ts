@@ -1,6 +1,6 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { Organization, type OrganizationState } from "../src/domain/entities/Organization.js";
+import { Organization, type OrganizationState } from "../../src/domain/entities/Organization.js";
 
 const INITIAL_DATE = new Date("2026-10-20T10:00:00.000Z");
 const LATER_DATE = new Date("2026-10-21T10:00:00.000Z");
